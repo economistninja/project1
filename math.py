@@ -73,3 +73,65 @@ def main():
 
 if __name__ == "__main__":
     main()
+#-------------
+# 3. Social networks
+#--------------
+from collections import deque
+
+def create_social_network():
+    """Create a sample social network using adjacency list."""
+    return {
+        'Alice': ['Bob', 'Charlie', 'David'],
+        'Bob': ['Alice', 'Emma', 'Frank'],
+        'Charlie': ['Alice', 'Grace'],
+        'David': ['Alice', 'Henry'],
+        'Emma': ['Bob', 'Ian'],
+        'Frank': ['Bob', 'Jane'],
+        'Grace': ['Charlie'],
+        'Henry': ['David'],
+        'Ian': ['Emma'],
+        'Jane': ['Frank']
+    }
+
+def find_friends_at_distance(network, person, distance):
+    """Find all friends at a specific connection distance using BFS."""
+    visited = set()
+    queue = deque([(person, 0)])
+    friends_at_distance = []
+    
+    while queue:
+        current_person, current_distance = queue.popleft()
+        
+        if current_person not in visited:
+            visited.add(current_person)
+            
+            if current_distance == distance:
+                friends_at_distance.append(current_person)
+            elif current_distance < distance:
+                for friend in network[current_person]:
+                    if friend not in visited:
+                        queue.append((friend, current_distance + 1))
+    
+    return friends_at_distance
+
+def find_mutual_friends(network, person1, person2):
+    """Find mutual friends between two people."""
+    friends1 = set(network[person1])
+    friends2 = set(network[person2])
+    return friends1.intersection(friends2)
+
+def main():
+    network = create_social_network()
+    
+    # Find friends at distance 2 (friends of friends) for Alice
+    print("\nFriends of friends for Alice:")
+    second_degree = find_friends_at_distance(network, 'Alice', 2)
+    print(f"  {second_degree}")
+    
+    # Find mutual friends between Bob and Alice
+    print("\nMutual friends between Alice and Bob:")
+    mutual = find_mutual_friends(network, 'Alice', 'Bob')
+    print(f"  {mutual}")
+
+if __name__ == "__main__":
+    main()
